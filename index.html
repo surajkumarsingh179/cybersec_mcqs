@@ -1,299 +1,376 @@
+# Full Updated Quiz App Code With Leaderboard 🏆
+
+Save this as:
+
+```text
+index.html
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cyber Security Quiz</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-sans); }
-.quiz-wrap { padding: 1rem 0; }
-.header { margin-bottom: 1.5rem; }
-.header h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
-.header p { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
-.progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin: 1rem 0; }
-.progress-fill { height: 100%; background: #185FA5; border-radius: 2px; transition: width 0.3s; }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
-.stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem; text-align: center; }
-.stat-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
-.stat-lbl { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
-.q-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
-.q-num { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
-.q-text { font-size: 15px; color: var(--color-text-primary); margin-bottom: 1rem; line-height: 1.5; font-weight: 500; }
-.options { display: flex; flex-direction: column; gap: 8px; }
-.opt-btn { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; text-align: left; cursor: pointer; font-size: 14px; color: var(--color-text-primary); transition: background 0.15s, border-color 0.15s; line-height: 1.4; }
-.opt-btn:hover:not(:disabled) { background: var(--color-background-tertiary); border-color: var(--color-border-secondary); }
-.opt-btn.correct { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
-.opt-btn.wrong { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
-.opt-btn.reveal { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
-.nav { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
-.btn { background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 8px 16px; cursor: pointer; font-size: 14px; color: var(--color-text-primary); }
-.btn:hover { background: var(--color-background-secondary); }
-.btn-primary { background: #185FA5; color: #fff; border-color: #185FA5; }
-.btn-primary:hover { background: #0C447C; }
-.feedback { font-size: 13px; margin-top: 10px; padding: 8px 12px; border-radius: var(--border-radius-md); display: none; }
-.feedback.show { display: block; }
-.feedback.correct { background: #EAF3DE; color: #27500A; }
-.feedback.wrong { background: #FCEBEB; color: #791F1F; }
-.result-screen { text-align: center; padding: 2rem 0; }
-.result-screen h2 { font-size: 28px; font-weight: 500; margin-bottom: 8px; }
-.score-circle { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #185FA5; display: flex; align-items: center; justify-content: center; margin: 1.5rem auto; flex-direction: column; }
-.score-pct { font-size: 28px; font-weight: 500; color: #185FA5; }
-.score-sub { font-size: 12px; color: var(--color-text-secondary); }
-.filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
-.filter-row select { font-size: 13px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
-.badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
-.badge-blue { background: #E6F1FB; color: #0C447C; }
-.badge-green { background: #EAF3DE; color: #27500A; }
-.badge-amber { background: #FAEEDA; color: #633806; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #0b1220;
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: #121c2e;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  background: #1e293b;
+}
+
+.option.correct {
+  background: green;
+}
+
+.option.wrong {
+  background: crimson;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #334155;
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  background: #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #2563eb;
+}
 </style>
+</head>
+<body>
 
-<h2 class="sr-only">Introduction to Cyber Security MCQ Practice Test — 90 questions from past exam papers</h2>
-
-<div class="quiz-wrap" id="app"></div>
+<div class="container">
+  <div id="app"></div>
+</div>
 
 <script>
 const ALL_QUESTIONS = [
-  {q:"Cyber law mainly deals with which of the following?",opts:["Crimes and offences related to computers","Traffic rules","Property transfer laws","Company registration"],ans:0,topic:"Cyber Law"},
-  {q:"Cyber jurisprudence refers to ______.",opts:["Legal philosophy of cyberspace","Traffic system analysis","Medical ethics","Business policies"],ans:0,topic:"Cyber Law"},
-  {q:"The primary need for cyber law arose due to ______.",opts:["Increasing population","Rise of e-commerce and online crimes","Poor internet speed","Lack of computers"],ans:1,topic:"Cyber Law"},
-  {q:"The IT Act 2000 was mainly introduced to ______.",opts:["Regulate banks","Provide legal recognition to electronic transactions","Control cyber cafés","Increase tax on computers"],ans:1,topic:"IT Act"},
-  {q:"Which of the following is NOT a conventional crime?",opts:["Theft","Murder","Phishing","Kidnapping"],ans:2,topic:"Cybercrime"},
-  {q:"The major difference between cybercrime and conventional crime is ______.",opts:["Tools and methods used","Motivation","Punishment","Location"],ans:0,topic:"Cybercrime"},
-  {q:"Which of the following is an example of unconventional cybercrime?",opts:["Stealing a car","Bank robbery","Hacking a website","Housebreaking"],ans:2,topic:"Cybercrime"},
-  {q:"Which factor majorly contributes to cybercrime?",opts:["Easy availability of tools","Poor lighting in cities","Expensive gadgets","Lack of electricity"],ans:0,topic:"Cybercrime"},
-  {q:"Botnets are commonly used for ______.",opts:["Planting trees","Sending bulk spam or DDoS attacks","Cooking","Video editing"],ans:1,topic:"Malware & Threats"},
-  {q:"Preventing computer crime includes ______.",opts:["Installing security patches","Avoiding social media","Buying expensive laptops","Using only mobile data"],ans:0,topic:"Security Measures"},
-  {q:"Which of the following is a cyber criminal's common mode of operation?",opts:["Online social engineering","Manual robbery","Street violence","Physical kidnapping"],ans:0,topic:"Cybercrime"},
-  {q:"Cyber stalking mainly involves ______.",opts:["Physical following","Online harassment or monitoring","Road accidents","Medical negligence"],ans:1,topic:"Cybercrime"},
-  {q:"The term 'digital evidence' refers to ______.",opts:["Handwritten notes","Any evidence stored or transmitted electronically","Printed books","Photocopies"],ans:1,topic:"Digital Forensics"},
-  {q:"Which of the following is an example of identity theft?",opts:["Using someone's ATM card illegally","Borrowing notes","Using friend's laptop","Watching movie online"],ans:0,topic:"Cybercrime"},
-  {q:"Cyber criminals often exploit _______ to commit crimes.",opts:["Human psychology","Weather","Agriculture","Music systems"],ans:0,topic:"Cybercrime"},
-  {q:"Database security mainly focuses on safeguarding ______.",opts:["Roads","Stored data and access controls","Certificates","Printers"],ans:1,topic:"Security Measures"},
-  {q:"Which backup type stores only changed data since last backup?",opts:["Full backup","Incremental backup","Cloud backup","Differential backup"],ans:3,topic:"Data Backup"},
-  {q:"Archival storage is mainly used for ______.",opts:["Long-term preservation of used data","Gaming","Daily desktop use","Temporary browsing"],ans:0,topic:"Data Backup"},
-  {q:"A firewall operates mainly at which level?",opts:["Network","Transportation","Agriculture","Manufacturing"],ans:0,topic:"Network Security"},
-  {q:"VPN provides ______.",opts:["Encrypted communication","Free Wi-Fi","Online gaming","Screen sharing"],ans:0,topic:"Network Security"},
-  {q:"IDS stands for ______.",opts:["Internal Data Source","Intrusion Detection System","Instant Data Service","Internet Digital Security"],ans:1,topic:"Network Security"},
-  {q:"Access control primarily ensures ______.",opts:["Who can access what","Internet speed","Data compression","Cloud hosting"],ans:0,topic:"Security Measures"},
-  {q:"A logic bomb is triggered by ______.",opts:["Specific event or condition","Night mode","Charging the device","Turning on Bluetooth"],ans:0,topic:"Malware & Threats"},
-  {q:"A macro virus often infects ______.",opts:["MS Office documents","USB cables","Monitors","Speakers"],ans:0,topic:"Malware & Threats"},
-  {q:"Denial of Service (DoS) attack affects ______.",opts:["Availability","Cooking","Printing","Download speed only"],ans:0,topic:"Malware & Threats"},
-  {q:"E-commerce fraud often targets ______.",opts:["Electronic payment systems","Window shopping","Newspapers","Gardening"],ans:0,topic:"E-Commerce Security"},
-  {q:"Digital signature ensures ______.",opts:["Authentication & Integrity","Fast internet","File compression","Backup"],ans:0,topic:"Cryptography"},
-  {q:"Public key cryptography uses ______.",opts:["One key","Two keys (public & private)","Cloud server","BIOS password"],ans:1,topic:"Cryptography"},
-  {q:"A Trojan horse appears to be ______.",opts:["Useful software but contains malicious code","A hardware device","A physical horse","A computer brand"],ans:0,topic:"Malware & Threats"},
-  {q:"Worms are different from viruses because they ______.",opts:["Replicate without host program","Need a host","Are harmless","Are hardware-based"],ans:0,topic:"Malware & Threats"},
-  {q:"IT Act 2000 covers which of the following?",opts:["Digital signature","Cyber offences","E-commerce legality","All of the above"],ans:3,topic:"IT Act"},
-  {q:"Section 66 of IT Act deals with ______.",opts:["Computer-related offences","Password recovery","Mobile charging","Software installation"],ans:0,topic:"IT Act"},
-  {q:"Copyright protects ______.",opts:["Original creative works","Food recipes","Physical buildings","Land ownership"],ans:0,topic:"IPR"},
-  {q:"Patent protects ______.",opts:["Inventions and processes","Song lyrics","Books","Paintings"],ans:0,topic:"IPR"},
-  {q:"Copyright in computer programs falls under ______.",opts:["Literary work","Artistic work","Sound recording","Dramatic work"],ans:0,topic:"IPR"},
-  {q:"WIPO stands for ______.",opts:["World Intellectual Property Organization","Western Internet Protection Office","Wireless Information Processing Organization","None"],ans:0,topic:"IPR"},
-  {q:"Software license ensures ______.",opts:["Legal use of software","Phone warranty","Online shopping","Free internet"],ans:0,topic:"IPR"},
-  {q:"Which treaty deals with digital rights?",opts:["WIPO Copyright Treaty","Paris Treaty","NATO Treaty","Warsaw Pact"],ans:0,topic:"IPR"},
-  {q:"Which of the following is NOT protected by IPR?",opts:["Ideas","Copyright","Patent","Trademark"],ans:0,topic:"IPR"},
-  {q:"Under IT Act, 'electronic signature' is legally valid under ______.",opts:["Section 3","Section 10A","Section 1","Section 80"],ans:1,topic:"IT Act"},
-  {q:"Cyber terrorism mainly targets ______.",opts:["Critical infrastructure","Cafés","Schools","Home Wi-Fi"],ans:0,topic:"Cybercrime"},
-  {q:"Social engineering attack exploits ______.",opts:["Human weakness","Routers","Servers only","Software bugs only"],ans:0,topic:"Malware & Threats"},
-  {q:"Zero-day attack occurs when ______.",opts:["Vulnerability is unknown to developer","Virus is old","Antivirus is updated","No data exists"],ans:0,topic:"Malware & Threats"},
-  {q:"Shoulder surfing is used to steal ______.",opts:["Passwords","Mobile cover","Laptop charger","Headphones"],ans:0,topic:"Cybercrime"},
-  {q:"A honeypot is used to ______.",opts:["Trap attackers","Increase wi-fi speed","Update browsers","Block pop-ups"],ans:0,topic:"Network Security"},
-  {q:"Data disposal guidelines require ______.",opts:["Secure deletion or destruction","Dumping in trash","Compressing using WinZip","Uploading to cloud"],ans:0,topic:"Data Backup"},
-  {q:"Trademark mainly protects ______.",opts:["Brand names and logos","Passwords","Photographs","Computer processors"],ans:0,topic:"IPR"},
-  {q:"Phishing is commonly performed through ______.",opts:["Fake emails","Physical letters","Cable TV","Radio"],ans:0,topic:"Cybercrime"},
-  {q:"The weakest link in cyber security is usually ______.",opts:["Human users","Strong passwords","Encryption","Hardware"],ans:0,topic:"Security Measures"},
-  {q:"The legal foundation for cyber offences in India is ______.",opts:["IT Act 2000","IPC 1860","Motor Vehicle Act","RTI"],ans:0,topic:"IT Act"},
-  {q:"What is Cyber Law primarily concerned with?",opts:["Managing internet speed","Governing crimes in cyberspace","Designing software applications","Tracking physical crimes"],ans:1,topic:"Cyber Law"},
-  {q:"What is the primary reason for the existence of cyber law?",opts:["To promote social media usage","To protect data and ensure secure cyberspace","To regulate internet speeds","To monitor employee behavior"],ans:1,topic:"Cyber Law"},
-  {q:"Intellectual Property Rights (IPRs) protect which of the following?",opts:["Physical assets","Personal financial transactions","Creative works like software, music, and patents","Illegal content on the internet"],ans:2,topic:"IPR"},
-  {q:"Which of the following is a conventional crime?",opts:["Data theft","Hacking","Phishing","Assault and battery"],ans:3,topic:"Cybercrime"},
-  {q:"What does the term 'phishing' refer to?",opts:["Tracking physical location","Cracking password algorithms","Fraudulent attempts to acquire sensitive information","Fishing for network data"],ans:2,topic:"Cybercrime"},
-  {q:"A key reason for cybercrime growth is ______.",opts:["High levels of cybersecurity measures","Increasing internet penetration","Strict laws against hacking","Reduced use of smartphones"],ans:1,topic:"Cybercrime"},
-  {q:"A cybercriminal's mode of operation often includes ______.",opts:["Social engineering, malware, and phishing","Only physical hacking of hardware","Tracking offline activities","Filing legal complaints"],ans:0,topic:"Cybercrime"},
-  {q:"Which of the following is NOT a cybercrime?",opts:["Ransomware attack","Unauthorized access to networks","Burglary of a store","Identity theft"],ans:2,topic:"Cybercrime"},
-  {q:"What is the purpose of the IT Act, 2000?",opts:["To regulate telecom operators","To create a legal framework for e-commerce and cybercrime","To monitor banking transactions","To define smartphone usage guidelines"],ans:1,topic:"IT Act"},
-  {q:"What is the term for unauthorized access to a computer system?",opts:["Hacking","Debugging","Penetration testing","Programming"],ans:0,topic:"Cybercrime"},
-  {q:"Cybersecurity prevention measures include all EXCEPT ______.",opts:["Installing firewalls","Regular software updates","Avoiding passwords","Using strong encryption"],ans:2,topic:"Security Measures"},
-  {q:"What does 'spoofing' involve?",opts:["Installing malicious apps","Masking communication to appear as someone else","Creating duplicate files","Manipulating physical devices"],ans:1,topic:"Malware & Threats"},
-  {q:"The difference between a cybercrime and conventional crime is primarily based on ______.",opts:["Geography","The use of digital tools","The involvement of witnesses","The intensity of the crime"],ans:1,topic:"Cybercrime"},
-  {q:"What is a major risk of weak passwords?",opts:["High memory usage","Slower internet speed","Reduced software performance","Increased vulnerability to attacks"],ans:3,topic:"Security Measures"},
-  {q:"Which is a primary goal of application security?",opts:["Enhance user interface","Protect applications from external threats","Optimize performance","Improve database queries"],ans:1,topic:"Security Measures"},
-  {q:"Which protocol is used to secure email communication?",opts:["HTTP","FTP","SMTP over SSL/TLS","POP3"],ans:2,topic:"Network Security"},
-  {q:"What is the main role of a VPN in application security?",opts:["Create a secure connection over public networks","Improve website speed","Prevent SQL injection attacks","Enhance graphics quality"],ans:0,topic:"Network Security"},
-  {q:"Which tool is most commonly used for intrusion detection?",opts:["Firewall","VPN","IDS (Intrusion Detection System)","Antivirus software"],ans:2,topic:"Network Security"},
-  {q:"Which method is most secure for archiving sensitive data?",opts:["Plain text storage","Encrypted storage","Local device storage","External hard drives without encryption"],ans:1,topic:"Data Backup"},
-  {q:"Which of the following is NOT a secure data disposal method?",opts:["Data shredding","Overwriting","Reformatting","Encryption"],ans:2,topic:"Data Backup"},
-  {q:"What is the best practice for data backups?",opts:["Keep all backups on the same machine","Avoid encrypting backup files","Back up data once a year","Store backups offsite in a secure location"],ans:3,topic:"Data Backup"},
-  {q:"Archival storage should prioritize ______.",opts:["Long-term durability and security","Speed of access","User interface design","Automatic file deletion"],ans:0,topic:"Data Backup"},
-  {q:"What does a firewall primarily do?",opts:["Speeds up internet connection","Prevents unauthorized access to or from a private network","Encrypts sensitive emails","Detects malicious software on devices"],ans:1,topic:"Network Security"},
-  {q:"Intrusion Detection Systems (IDS) work by ______.",opts:["Monitoring and alerting on suspicious activity","Actively blocking threats","Performing system updates","Deleting malicious files automatically"],ans:0,topic:"Network Security"},
-  {q:"Access control ensures ______.",opts:["Secure remote communication","Enhanced graphical user interfaces","Faster processing speeds","Only authorized users can access resources"],ans:3,topic:"Security Measures"},
-  {q:"Which type of malware is designed to replicate itself?",opts:["Trojan Horse","Worm","Logic Bomb","Spyware"],ans:1,topic:"Malware & Threats"},
-  {q:"What is the primary goal of a Denial of Service (DoS) attack?",opts:["To steal sensitive data","To bypass authentication measures","To render a system or service unavailable","To infect systems with malware"],ans:2,topic:"Malware & Threats"},
-  {q:"What is a 'Trojan Horse' in cybersecurity?",opts:["Malicious software disguised as legitimate software","A virus that self-replicates","A tool for encrypting emails","A firewall protocol"],ans:0,topic:"Malware & Threats"},
-  {q:"Which threat is specific to e-commerce platforms?",opts:["Physical theft","Malware attacks on digital payment systems","Unauthorized access to server rooms","Loss of graphic assets"],ans:1,topic:"E-Commerce Security"},
-  {q:"A digital signature ensures ______.",opts:["Faster data transmission","Authentication and integrity of digital messages","Encryption of all files","Prevention of email phishing"],ans:1,topic:"Cryptography"},
-  {q:"Public Key Cryptography uses ______.",opts:["One private key only","No encryption keys","Only one symmetric key","A pair of public and private keys"],ans:3,topic:"Cryptography"},
-  {q:"What technology is widely used to secure credit card transactions online?",opts:["HTTPS with SSL/TLS","VPNs","IDS","Firewalls"],ans:0,topic:"E-Commerce Security"},
-  {q:"What does Section 67 of the IT Act penalize?",opts:["Sending spam emails","Identity theft","Publishing obscene material online","Hacking activities"],ans:2,topic:"IT Act"},
-  {q:"The IT Amendment Act, 2008 introduced provisions for ______.",opts:["Digital signatures","Cyber terrorism","Licensing fees","Electronic appliances"],ans:1,topic:"IT Act"},
-  {q:"Which body oversees the implementation of cyber laws in India?",opts:["NASSCOM","SEBI","TRAI","CERT-In"],ans:3,topic:"IT Act"},
-  {q:"What is an open-source software license?",opts:["A license for free, unrestricted use and modification of software","A license to purchase software at a discount","A license restricted to one user only","A license that expires after a year"],ans:0,topic:"IPR"},
-  {q:"What does copyright protect in cyberspace?",opts:["Only software code","Hardware designs","Original works, including text, images, and software","File formats"],ans:2,topic:"IPR"},
-  {q:"Which treaty addresses copyright in the digital environment?",opts:["TRIPS Agreement","Berne Convention","WIPO Copyright Treaty","Hague Treaty"],ans:2,topic:"IPR"},
-  {q:"Digital piracy typically violates which legal concept?",opts:["Trademark law","Contract law","Cybercrime law","Copyright law"],ans:3,topic:"IPR"},
-  {q:"Which of the following is NOT patentable in India?",opts:["Novel inventions","Algorithms","Industrial processes","Pharmaceuticals"],ans:1,topic:"IPR"},
-  {q:"Which international body facilitates patent protection globally?",opts:["World Trade Organization (WTO)","World Intellectual Property Organization (WIPO)","International Monetary Fund (IMF)","Interpol"],ans:1,topic:"IPR"},
-  {q:"What does the TRIPS Agreement relate to?",opts:["Taxation laws","International border laws","Trade-related intellectual property rights","Cybercrime laws"],ans:2,topic:"IPR"},
-  {q:"What is 'fair use' in copyright law?",opts:["Limited use for education, review, or criticism without permission","Unlimited use of copyrighted material","Mandatory licensing for digital works","Exclusive commercial use rights"],ans:0,topic:"IPR"},
-  {q:"Which cybercrime involves unauthorized copying of software?",opts:["Cyberstalking","Phishing","Software piracy","Malware injection"],ans:2,topic:"Cybercrime"}
+  {
+    q: "What is phishing?",
+    opts: [
+      "Fishing online",
+      "Fraudulent attempt to steal information",
+      "Virus removal",
+      "Firewall setup"
+    ],
+    ans: 1
+  },
+  {
+    q: "Which is used for secure communication?",
+    opts: ["HTTP", "FTP", "HTTPS", "SMTP"],
+    ans: 2
+  },
+  {
+    q: "Which malware replicates itself?",
+    opts: ["Trojan", "Worm", "Spyware", "Adware"],
+    ans: 1
+  },
+  {
+    q: "Firewall is used for?",
+    opts: [
+      "Cooking",
+      "Unauthorized access prevention",
+      "Gaming",
+      "Music"
+    ],
+    ans: 1
+  },
+  {
+    q: "Strong passwords should contain?",
+    opts: [
+      "Only numbers",
+      "Only letters",
+      "Mixed characters",
+      "Only symbols"
+    ],
+    ans: 2
+  }
 ];
 
-const TOPICS = ["All Topics", ...new Set(ALL_QUESTIONS.map(q => q.topic))];
-
-let questions = [];
 let current = 0;
 let score = 0;
-let answered = [];
 let started = false;
-let quizMode = "all";
-let numQ = 50;
+let answered = [];
+let playerName = "";
 
-function shuffle(arr) {
-  let a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function startQuiz(topic, num) {
-  let pool = topic === "All Topics" ? ALL_QUESTIONS : ALL_QUESTIONS.filter(q => q.topic === topic);
-  questions = shuffle(pool).slice(0, Math.min(num, pool.length));
-  current = 0; score = 0;
-  answered = new Array(questions.length).fill(null);
-  started = true;
-  render();
-}
-
-function selectAnswer(idx) {
-  if (answered[current] !== null) return;
-  answered[current] = idx;
-  if (idx === questions[current].ans) score++;
-  render();
-}
-
-function next() { if (current < questions.length - 1) { current++; render(); } }
-function prev() { if (current > 0) { current--; render(); } }
+let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
 
 function renderStart() {
   return `
     <div class="header">
-      <h2>Introduction to Cyber Security</h2>
-      <p>Practice test based on BCSM 0001 past exam papers &nbsp;·&nbsp; ${ALL_QUESTIONS.length} questions available</p>
+      <h1>Cyber Security Quiz 🛡️</h1>
+      <p>Test your cybersecurity knowledge</p>
     </div>
-    <div class="q-card">
-      <p style="font-size:14px;color:var(--color-text-secondary);margin-bottom:12px;">Configure your test</p>
-      <div class="filter-row">
-        <label style="font-size:13px;color:var(--color-text-secondary);min-width:60px;">Topic</label>
-        <select id="topicSel">${TOPICS.map(t => `<option>${t}</option>`).join("")}</select>
-      </div>
-      <div class="filter-row" style="margin-top:8px;">
-        <label style="font-size:13px;color:var(--color-text-secondary);min-width:60px;">Questions</label>
-        <select id="numSel">
-          <option value="25">25</option>
-          <option value="50" selected>50</option>
-          <option value="75">75</option>
-          <option value="93">All (${ALL_QUESTIONS.length})</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" style="margin-top:16px;" onclick="document.getElementById('startBtn').click()">Start Practice Test ↗</button>
-      <button id="startBtn" style="display:none" onclick="
-        const t = document.getElementById('topicSel').value;
-        const n = parseInt(document.getElementById('numSel').value);
-        startQuiz(t, n);
-      "></button>
+
+    <div class="card">
+      <label>Your Name</label>
+      <input type="text" id="playerName" placeholder="Enter your name" />
+
+      <button onclick="startQuiz()">Start Quiz 🚀</button>
     </div>
-    <div style="margin-top:1rem;">
-      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;">Topics covered:</p>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">
-        ${[...new Set(ALL_QUESTIONS.map(q=>q.topic))].map(t=>`<span class="badge badge-blue">${t}</span>`).join("")}
-      </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:15px;">🏆 Leaderboard</h2>
+
+      ${leaderboard.length === 0
+        ? `<p>No scores yet</p>`
+        : leaderboard.map((p, i) => `
+          <div class="leaderboard-item">
+            <span>#${i + 1} ${p.name}</span>
+            <strong>${p.percentage}%</strong>
+          </div>
+        `).join("")
+      }
     </div>
   `;
 }
 
-function renderQuiz() {
-  const q = questions[current];
-  const ans = answered[current];
-  const total = questions.length;
-  const pct = Math.round((current / total) * 100);
+function startQuiz() {
+  playerName = document.getElementById("playerName").value || "Anonymous";
+  started = true;
+  current = 0;
+  score = 0;
+  answered = new Array(ALL_QUESTIONS.length).fill(null);
+  render();
+}
 
-  return `
-    <div class="stats">
-      <div class="stat"><div class="stat-val">${current + 1}/${total}</div><div class="stat-lbl">Question</div></div>
-      <div class="stat"><div class="stat-val" style="color:#3B6D11">${score}</div><div class="stat-lbl">Correct</div></div>
-      <div class="stat"><div class="stat-val" style="color:#A32D2D">${answered.filter((a,i)=>a!==null && a!==questions[i].ans).length}</div><div class="stat-lbl">Wrong</div></div>
-      <div class="stat"><div class="stat-val">${answered.filter(a=>a===null).length}</div><div class="stat-lbl">Remaining</div></div>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <div class="q-card">
-      <div class="q-num">Q${current + 1} &nbsp;·&nbsp; <span class="badge badge-blue">${q.topic}</span></div>
-      <div class="q-text">${q.q}</div>
-      <div class="options">
-        ${q.opts.map((o, i) => {
-          let cls = "opt-btn";
-          if (ans !== null) {
-            if (i === q.ans) cls += " correct";
-            else if (i === ans && ans !== q.ans) cls += " wrong";
-          }
-          return `<button class="${cls}" onclick="selectAnswer(${i})" ${ans !== null ? "disabled" : ""}>${String.fromCharCode(65+i)}. ${o}</button>`;
-        }).join("")}
-      </div>
-      ${ans !== null ? `
-        <div class="feedback show ${ans === q.ans ? "correct" : "wrong"}">
-          ${ans === q.ans ? "✓ Correct!" : `✗ Wrong. Correct answer: <strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong>`}
-        </div>
-      ` : ""}
-    </div>
-    <div class="nav">
-      <button class="btn" onclick="prev()" ${current === 0 ? "disabled" : ""}>← Previous</button>
-      ${current < total - 1 
-        ? `<button class="btn btn-primary" onclick="next()">Next →</button>`
-        : `<button class="btn btn-primary" onclick="showResult()">Finish Test ↗</button>`
-      }
-      <button class="btn" onclick="if(confirm('Restart quiz?')){started=false;render();}">↺ Restart</button>
-    </div>
-  `;
+function selectAnswer(index) {
+  if (answered[current] !== null) return;
+
+  answered[current] = index;
+
+  if (index === ALL_QUESTIONS[current].ans) {
+    score++;
+  }
+
+  render();
+}
+
+function nextQuestion() {
+  if (current < ALL_QUESTIONS.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
 }
 
 function showResult() {
-  const total = questions.length;
-  const pct = Math.round((score / total) * 100);
-  const grade = pct >= 90 ? "Excellent!" : pct >= 75 ? "Good job!" : pct >= 60 ? "Keep practicing!" : "Need more revision";
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <div class="result-screen">
-      <h2>${grade}</h2>
-      <div class="score-circle">
-        <span class="score-pct">${pct}%</span>
-        <span class="score-sub">${score}/${total}</span>
+  const total = ALL_QUESTIONS.length;
+  const percentage = Math.round((score / total) * 100);
+
+  leaderboard.push({
+    name: playerName,
+    score,
+    total,
+    percentage
+  });
+
+  leaderboard.sort((a, b) => b.percentage - a.percentage);
+
+  leaderboard = leaderboard.slice(0, 10);
+
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+
+  document.getElementById("app").innerHTML = `
+    <div class="header">
+      <h1>Quiz Completed 🎉</h1>
+      <p>${playerName}, your score is:</p>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <h2 style="font-size:50px;">${percentage}%</h2>
+      <p>${score}/${total} Correct</p>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:15px;">🏆 Leaderboard</h2>
+
+      ${leaderboard.map((p, i) => `
+        <div class="leaderboard-item">
+          <span>#${i + 1} ${p.name}</span>
+          <strong>${p.percentage}% (${p.score}/${p.total})</strong>
+        </div>
+      `).join("")}
+    </div>
+
+    <button onclick="restartQuiz()">Play Again 🔄</button>
+  `;
+}
+
+function restartQuiz() {
+  started = false;
+  render();
+}
+
+function renderQuiz() {
+  const q = ALL_QUESTIONS[current];
+  const ans = answered[current];
+
+  return `
+    <div class="stats">
+      <div class="stat">
+        <h3>${current + 1}/${ALL_QUESTIONS.length}</h3>
+        <p>Question</p>
       </div>
-      <p style="font-size:15px;color:var(--color-text-secondary);margin-bottom:1.5rem;">You answered ${score} out of ${total} questions correctly.</p>
-      <div class="stats" style="max-width:360px;margin:0 auto 1.5rem;">
-        <div class="stat"><div class="stat-val" style="color:#3B6D11">${score}</div><div class="stat-lbl">Correct</div></div>
-        <div class="stat"><div class="stat-val" style="color:#A32D2D">${total - score}</div><div class="stat-lbl">Wrong</div></div>
-        <div class="stat"><div class="stat-val">${pct}%</div><div class="stat-lbl">Score</div></div>
-        <div class="stat"><div class="stat-val">${total}</div><div class="stat-lbl">Total</div></div>
+
+      <div class="stat">
+        <h3>${score}</h3>
+        <p>Correct</p>
       </div>
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="started=false;render();">New Test ↗</button>
-        <button class="btn" onclick="current=0;render();">Review Answers</button>
+
+      <div class="stat">
+        <h3>${ALL_QUESTIONS.length - score}</h3>
+        <p>Remaining</p>
       </div>
+
+      <div class="stat">
+        <h3>${playerName}</h3>
+        <p>Player</p>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" style="width:${((current + 1) / ALL_QUESTIONS.length) * 100}%"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:20px;">${q.q}</h2>
+
+      ${q.opts.map((opt, i) => {
+        let cls = "option";
+
+        if (ans !== null) {
+          if (i === q.ans) cls += " correct";
+          else if (i === ans) cls += " wrong";
+        }
+
+        return `
+          <button class="${cls}" onclick="selectAnswer(${i})">
+            ${opt}
+          </button>
+        `;
+      }).join("")}
+
+      ${ans !== null
+        ? `<button style="margin-top:15px;" onclick="nextQuestion()">Next ➜</button>`
+        : ""
+      }
     </div>
   `;
 }
 
 function render() {
-  document.getElementById("app").innerHTML = started ? renderQuiz() : renderStart();
+  document.getElementById("app").innerHTML = started
+    ? renderQuiz()
+    : renderStart();
 }
 
 render();
 </script>
+
+</body>
+</html>
+```
+
+---
+
+# 🚀 Deployment
+
+1. Save file as:
+
+```text
+index.html
+```
+
+2. Upload folder to Netlify.
+
+3. Done 🎯
