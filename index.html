@@ -3,205 +3,646 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Security Quiz</title>
-
+<title>CyberQuiz — Test Your Security Knowledge</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing:border-box; margin:0; padding:0; }
-
-body{
-  font-family:Arial,sans-serif;
-  background:#0f172a;
-  color:white;
-  padding:20px;
+:root {
+  --bg: #080c14;
+  --surface: #0d1424;
+  --surface2: #111b30;
+  --border: #1e2d4a;
+  --border2: #253550;
+  --accent: #00d4ff;
+  --accent2: #0099cc;
+  --green: #00e676;
+  --red: #ff3d71;
+  --yellow: #ffd740;
+  --purple: #b388ff;
+  --text: #e8f0fe;
+  --muted: #6b7fa3;
+  --dimmer: #3d5280;
 }
 
-.quiz-wrap{
-  max-width:900px;
-  margin:auto;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.header{
-  margin-bottom:1.5rem;
+/* animated grid bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.header h2{
-  font-size:28px;
-  margin-bottom:8px;
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.header p{
-  color:#94a3b8;
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
 }
 
-.progress-bar{
-  height:6px;
-  background:#1e293b;
-  border-radius:20px;
-  overflow:hidden;
-  margin:1rem 0;
+/* HEADER */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.site-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.site-title span { color: var(--accent); }
+.site-sub {
+  font-size: 13px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.progress-fill{
-  height:100%;
-  background:#2563eb;
-  transition:0.3s;
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
 }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-bottom:1rem;
+/* SETUP SCREEN */
+.setup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } }
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+input:focus, select:focus { border-color: var(--accent); }
+input::placeholder { color: var(--muted); }
+
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.active { background: rgba(0,212,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+.q-count-options {
+  display: flex;
+  gap: 10px;
+}
+.count-opt {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.count-opt:hover { border-color: var(--accent); color: var(--accent); }
+.count-opt.active { background: rgba(0,212,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+/* BUTTONS */
+.btn {
+  padding: 13px 22px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.btn-ghost:hover:not(:disabled) { background: var(--border2); }
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #33ddff;
+  box-shadow: 0 0 20px rgba(0,212,255,0.4);
+  transform: translateY(-1px);
+}
+.btn-start {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  background: linear-gradient(135deg, var(--accent), #0073e6);
+  color: #000;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,212,255,0.35);
 }
 
-.stat{
-  background:#1e293b;
-  border-radius:12px;
-  padding:15px;
-  text-align:center;
+/* QUIZ SCREEN */
+.hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.hud-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+}
+.hud-val {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.hud-val.green { color: var(--green); }
+.hud-val.red { color: var(--red); }
+.hud-val.blue { color: var(--accent); }
+.hud-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 3px;
 }
 
-.stat-val{
-  font-size:22px;
-  font-weight:bold;
+/* progress */
+.progress-wrap {
+  background: var(--surface2);
+  border-radius: 4px;
+  height: 4px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.stat-lbl{
-  font-size:12px;
-  color:#94a3b8;
+/* question nav dots */
+.q-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.q-dot {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.q-dot:hover { border-color: var(--accent); }
+.q-dot.current { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.1); }
+.q-dot.correct { background: rgba(0,230,118,0.15); border-color: var(--green); color: var(--green); }
+.q-dot.wrong { background: rgba(255,61,113,0.15); border-color: var(--red); color: var(--red); }
+.q-dot.skipped { background: rgba(255,215,64,0.1); border-color: var(--yellow); color: var(--yellow); }
+
+/* question card */
+.q-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.q-index {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+.topic-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.25);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+}
+.q-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.55;
+  margin-bottom: 20px;
+  letter-spacing: -0.2px;
 }
 
-.q-card{
-  background:#1e293b;
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:1rem;
+/* options */
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+  width: 100%;
+}
+.opt:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.05);
+}
+.opt:disabled { cursor: default; }
+.opt-letter {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.opt-text { font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+.opt.correct {
+  border-color: var(--green);
+  background: rgba(0,230,118,0.08);
+  animation: flash-green 0.4s ease;
+}
+.opt.correct .opt-letter { background: var(--green); color: #000; border-color: var(--green); }
+
+.opt.wrong {
+  border-color: var(--red);
+  background: rgba(255,61,113,0.08);
+  animation: flash-red 0.4s ease;
+}
+.opt.wrong .opt-letter { background: var(--red); color: #fff; border-color: var(--red); }
+
+.opt.highlight-correct {
+  border-color: var(--green);
+  background: rgba(0,230,118,0.05);
+}
+.opt.highlight-correct .opt-letter { border-color: var(--green); color: var(--green); }
+
+@keyframes flash-green {
+  0% { box-shadow: 0 0 0 rgba(0,230,118,0); }
+  50% { box-shadow: 0 0 20px rgba(0,230,118,0.3); }
+  100% { box-shadow: 0 0 0 rgba(0,230,118,0); }
+}
+@keyframes flash-red {
+  0% { box-shadow: 0 0 0 rgba(255,61,113,0); }
+  50% { box-shadow: 0 0 20px rgba(255,61,113,0.25); }
+  100% { box-shadow: 0 0 0 rgba(255,61,113,0); }
 }
 
-.q-num{
-  font-size:13px;
-  color:#94a3b8;
-  margin-bottom:10px;
+/* explanation */
+.explanation {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(0,212,255,0.06);
+  border-left: 3px solid var(--accent);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  display: none;
+}
+.explanation.show { display: block; animation: fade-in 0.3s; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* nav */
+.nav-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.nav-spacer { flex: 1; }
+
+/* TIMER */
+.timer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 8px 14px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.timer.warn { color: var(--yellow); border-color: rgba(255,215,64,0.4); }
+.timer.danger { color: var(--red); border-color: rgba(255,61,113,0.4); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+
+/* RESULTS */
+.result-hero {
+  text-align: center;
+  padding: 40px 20px;
+}
+.score-ring {
+  width: 150px; height: 150px;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.score-pct {
+  font-size: 36px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+}
+.score-frac {
+  font-size: 13px;
+  color: var(--muted);
+}
+.grade-text {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.grade-sub { color: var(--muted); font-size: 14px; }
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+@media (max-width: 500px) { .result-stats { grid-template-columns: repeat(2,1fr); } }
+
+.rstat {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 10px;
+  text-align: center;
+}
+.rstat-val { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.rstat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* LEADERBOARD */
+.lb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.lb-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.lb-cols {
+  display: grid;
+  grid-template-columns: 36px 1fr auto auto auto;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.lb-col-lbl {
+  font-size: 11px;
+  color: var(--dimmer);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.lb-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 6px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px;
+  transition: background 0.15s;
+  animation: row-in 0.3s ease both;
+}
+.lb-row:hover { background: var(--surface2); }
+@keyframes row-in { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+.lb-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+.rank-1 { color: #ffd700; }
+.rank-2 { color: #c0c0c0; }
+.rank-3 { color: #cd7f32; }
+.lb-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-score { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+.lb-pct { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+.lb-pct.high { color: var(--green); }
+.lb-pct.mid { color: var(--yellow); }
+.lb-pct.low { color: var(--red); }
+.lb-bar-wrap { min-width: 80px; }
+.lb-bar-bg {
+  height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lb-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+.lb-you { border: 1px solid rgba(0,212,255,0.3) !important; background: rgba(0,212,255,0.04) !important; }
+
+.you-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: rgba(0,212,255,0.15);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+  margin-left: 6px;
+  font-weight: 600;
 }
 
-.q-text{
-  font-size:18px;
-  line-height:1.5;
-  margin-bottom:1rem;
+.topic-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.tb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tb-name { font-size: 12px; width: 160px; flex-shrink: 0; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.tb-bar-fill { height: 100%; border-radius: 4px; }
+.tb-score { font-size: 12px; font-family: 'JetBrains Mono', monospace; min-width: 36px; text-align: right; }
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
-.options{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+/* section title */
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--dimmer);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
-.opt-btn{
-  background:#0f172a;
-  border:1px solid #334155;
-  color:white;
-  border-radius:10px;
-  padding:12px;
-  text-align:left;
-  cursor:pointer;
-  transition:0.2s;
+.tab-row {
+  display: flex;
+  gap: 0;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.tab {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab.active {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border2);
 }
 
-.opt-btn:hover{
-  background:#334155;
-}
-
-.opt-btn.correct{
-  background:green;
-}
-
-.opt-btn.wrong{
-  background:crimson;
-}
-
-.nav{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.btn{
-  background:#334155;
-  border:none;
-  color:white;
-  padding:10px 18px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.btn-primary{
-  background:#2563eb;
-}
-
-.result-screen{
-  text-align:center;
-}
-
-.score-circle{
-  width:130px;
-  height:130px;
-  border-radius:50%;
-  border:5px solid #2563eb;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  margin:20px auto;
-}
-
-.score-pct{
-  font-size:32px;
-  font-weight:bold;
-}
-
-.score-sub{
-  color:#94a3b8;
-  font-size:13px;
-}
-
-.filter-row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin-bottom:1rem;
-}
-
-input,select{
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#0f172a;
-  color:white;
-}
-
-.badge{
-  background:#2563eb;
-  border-radius:20px;
-  padding:4px 10px;
-  font-size:11px;
-}
-
-.leaderboard-item{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px solid #334155;
-}
+.confetti { display: none; }
 </style>
 </head>
-
 <body>
-
-<div class="quiz-wrap" id="app"></div>
+<div id="app"></div>
 
 <script>
-
 const ALL_QUESTIONS = [
   {q:"Cyber law mainly deals with which of the following?",opts:["Crimes and offences related to computers","Traffic rules","Property transfer laws","Company registration"],ans:0,topic:"Cyber Law"},
   {q:"Cyber jurisprudence refers to ______.",opts:["Legal philosophy of cyberspace","Traffic system analysis","Medical ethics","Business policies"],ans:0,topic:"Cyber Law"},
@@ -298,488 +739,369 @@ const ALL_QUESTIONS = [
   {q:"What is 'fair use' in copyright law?",opts:["Limited use for education, review, or criticism without permission","Unlimited use of copyrighted material","Mandatory licensing for digital works","Exclusive commercial use rights"],ans:0,topic:"IPR"},
   {q:"Which cybercrime involves unauthorized copying of software?",opts:["Cyberstalking","Phishing","Software piracy","Malware injection"],ans:2,topic:"Cybercrime"}
 ];
-const TOPICS = [
-"All Topics",
-...new Set(ALL_QUESTIONS.map(q=>q.topic))
-];
 
-let questions = [];
-let current = 0;
-let score = 0;
-let answered = [];
-let started = false;
+const TOPICS = ["All Topics", ...new Set(ALL_QUESTIONS.map(q=>q.topic))];
+const TOPIC_COLORS = {
+  "Cyber Law": "#00d4ff", "IT Act": "#b388ff", "Cybercrime": "#ff3d71",
+  "Malware & Threats": "#ff6d00", "Security Measures": "#00e676",
+  "Network Security": "#40c4ff", "Data Backup": "#ffd740",
+  "Digital Forensics": "#ea80fc", "E-Commerce Security": "#a5d6a7",
+  "Cryptography": "#ffab40", "IPR": "#80cbc4"
+};
 
-let playerName = "";
+let state = {
+  screen: 'setup', // setup | quiz | result
+  playerName: 'Anonymous',
+  selectedTopic: 'All Topics',
+  selectedCount: 25,
+  questions: [],
+  current: 0,
+  answers: [],
+  startTime: null,
+  elapsed: 0,
+  timerInterval: null,
+  resultTab: 'leaderboard'
+};
 
-let leaderboard =
-JSON.parse(localStorage.getItem("leaderboard")) || [];
+let leaderboard = JSON.parse(localStorage.getItem('cq_leaderboard_v2') || '[]');
 
-function shuffle(arr){
-
-let a=[...arr];
-
-for(let i=a.length-1;i>0;i--){
-
-let j=Math.floor(Math.random()*(i+1));
-
-[a[i],a[j]]=[a[j],a[i]];
+function shuffle(arr) {
+  let a = [...arr];
+  for(let i=a.length-1;i>0;i--) { let j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
 }
 
-return a;
+function startQuiz() {
+  let pool = state.selectedTopic === 'All Topics'
+    ? ALL_QUESTIONS
+    : ALL_QUESTIONS.filter(q=>q.topic===state.selectedTopic);
+  state.questions = shuffle(pool).slice(0, Math.min(state.selectedCount, pool.length));
+  state.current = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+  state.startTime = Date.now();
+  state.elapsed = 0;
+  state.screen = 'quiz';
+  if(state.timerInterval) clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(()=>{ state.elapsed = Math.floor((Date.now()-state.startTime)/1000); updateHUD(); }, 1000);
+  render();
 }
 
-function startQuiz(topic,num){
-
-let pool =
-topic==="All Topics"
-? ALL_QUESTIONS
-: ALL_QUESTIONS.filter(q=>q.topic===topic);
-
-questions =
-shuffle(pool).slice(0,Math.min(num,pool.length));
-
-current=0;
-score=0;
-
-answered=
-new Array(questions.length).fill(null);
-
-started=true;
-
-render();
+function selectAnswer(idx) {
+  if(state.answers[state.current] !== null) return;
+  state.answers[state.current] = idx;
+  render();
 }
 
-function selectAnswer(idx){
-
-if(answered[current]!==null) return;
-
-answered[current]=idx;
-
-if(idx===questions[current].ans){
-score++;
+function goTo(idx) {
+  state.current = idx;
+  render();
 }
 
-render();
+function finishQuiz() {
+  clearInterval(state.timerInterval);
+  let score = state.answers.filter((a,i)=>a===state.questions[i].ans).length;
+  let pct = Math.round((score/state.questions.length)*100);
+  let entry = {
+    name: state.playerName,
+    score, total: state.questions.length,
+    pct, elapsed: state.elapsed,
+    topic: state.selectedTopic,
+    date: new Date().toLocaleDateString()
+  };
+  leaderboard.push(entry);
+  leaderboard.sort((a,b)=>b.pct-a.pct||a.elapsed-b.elapsed);
+  leaderboard = leaderboard.slice(0,20);
+  localStorage.setItem('cq_leaderboard_v2', JSON.stringify(leaderboard));
+  state.screen = 'result';
+  state.resultTab = 'leaderboard';
+  render();
 }
 
-function next(){
-
-if(current<questions.length-1){
-current++;
-render();
-}
+function formatTime(s) {
+  let m = Math.floor(s/60);
+  return `${m}:${String(s%60).padStart(2,'0')}`;
 }
 
-function prev(){
+function pctColor(p) { return p>=80 ? 'high' : p>=50 ? 'mid' : 'low'; }
+function pctBarColor(p) { return p>=80 ? 'var(--green)' : p>=50 ? 'var(--yellow)' : 'var(--red)'; }
 
-if(current>0){
-current--;
-render();
-}
-}
-
-function renderStart(){
-
-return `
-
-<div class="header">
-<h2>Cyber Security Quiz 🛡️</h2>
-<p>${ALL_QUESTIONS.length} Questions Available</p>
-</div>
-
-<div class="q-card">
-
-<div class="filter-row">
-<label>Name</label>
-
-<input
-type="text"
-id="playerName"
-placeholder="Enter your name"
-/>
-</div>
-
-<div class="filter-row">
-<label>Topic</label>
-
-<select id="topicSel">
-${TOPICS.map(
-t=>`<option>${t}</option>`
-).join("")}
-</select>
-</div>
-
-<div class="filter-row">
-<label>Questions</label>
-
-<select id="numSel">
-
-<option value="25">
-25
-</option>
-
-<option value="50">
-50
-</option>
-
-<option value="${ALL_QUESTIONS.length}">
-All (${ALL_QUESTIONS.length})
-</option>
-
-</select>
-</div>
-
-<button
-class="btn btn-primary"
-onclick="
-
-const t =
-document.getElementById('topicSel').value;
-
-const n =
-parseInt(document.getElementById('numSel').value);
-
-playerName =
-document.getElementById('playerName').value
-|| 'Anonymous';
-
-startQuiz(t,n);
-
-"
->
-
-Start Quiz 🗿
-
-</button>
-
-</div>
-
-<div class="q-card">
-
-<h3 style="margin-bottom:15px;">
-🏆 Leaderboard
-</h3>
-
-${
-leaderboard.length===0
-
-? `<p>No scores yet</p>`
-
-: leaderboard.map((p,i)=>`
-
-<div class="leaderboard-item">
-
-<span>
-#${i+1} ${p.name}
-</span>
-
-<strong>
-${p.percentage}%
-</strong>
-
-</div>
-
-`).join("")
+function rankMedal(i) {
+  if(i===0) return '🥇';
+  if(i===1) return '🥈';
+  if(i===2) return '🥉';
+  return `#${i+1}`;
 }
 
-</div>
+// ── RENDERERS ──
 
-`;
+function renderSetup() {
+  const topicChips = TOPICS.map(t => `
+    <span class="chip ${state.selectedTopic===t?'active':''}"
+      onclick="state.selectedTopic='${t}';render()">${t}</span>
+  `).join('');
+
+  const counts = [10,25,50,ALL_QUESTIONS.length];
+  const countOpts = counts.map(n => `
+    <button class="count-opt ${state.selectedCount===n?'active':''}"
+      onclick="state.selectedCount=${n};render()">${n=== ALL_QUESTIONS.length?'All ('+n+')':n}</button>
+  `).join('');
+
+  let pool = state.selectedTopic==='All Topics' ? ALL_QUESTIONS : ALL_QUESTIONS.filter(q=>q.topic===state.selectedTopic);
+  let available = Math.min(state.selectedCount, pool.length);
+
+  return `
+    <div class="site-header">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <div class="site-title">Cyber<span>Quiz</span></div>
+        <div class="site-sub">${ALL_QUESTIONS.length} questions · ${TOPICS.length-1} topics</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Player Setup</div>
+      <div class="field-label">Your Name</div>
+      <input id="pname" type="text" placeholder="Enter your name..." value="${state.playerName==='Anonymous'?'':state.playerName}"
+        oninput="state.playerName=this.value||'Anonymous'" style="margin-bottom:20px"/>
+
+      <div class="field-label">Select Topic</div>
+      <div class="topic-chips">${topicChips}</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Quiz Length</div>
+      <div class="q-count-options">${countOpts}</div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">
+        ${available} questions will be drawn${state.selectedTopic!=='All Topics'?' from '+state.selectedTopic:''}
+      </p>
+    </div>
+
+    <button class="btn-start" onclick="startQuiz()">
+      Start Quiz →
+    </button>
+
+    ${leaderboard.length > 0 ? `
+    <div class="card" style="margin-top:16px">
+      <div class="lb-header">
+        <div class="lb-title">🏆 Leaderboard</div>
+        <span style="font-size:12px;color:var(--muted)">${leaderboard.length} entries</span>
+      </div>
+      ${renderLeaderboardRows(leaderboard, null, 5)}
+    </div>` : ''}
+  `;
 }
 
-function renderQuiz(){
+function renderQuiz() {
+  const q = state.questions[state.current];
+  const ans = state.answers[state.current];
+  const total = state.questions.length;
+  const score = state.answers.filter((a,i)=>a!==null&&a===state.questions[i].ans).length;
+  const wrong = state.answers.filter((a,i)=>a!==null&&a!==state.questions[i].ans).length;
+  const pct = Math.round((state.current/total)*100);
+  const allAnswered = state.answers.every(a=>a!==null);
 
-const q=questions[current];
+  const dots = state.questions.map((qq, i) => {
+    let cls = 'q-dot';
+    if(i===state.current) cls += ' current';
+    else if(state.answers[i]!==null) {
+      cls += state.answers[i]===qq.ans ? ' correct' : ' wrong';
+    } else if(i<state.current) cls += ' skipped';
+    return `<div class="${cls}" onclick="goTo(${i})">${i+1}</div>`;
+  }).join('');
 
-const ans=answered[current];
+  const opts = q.opts.map((o, i) => {
+    let cls = 'opt';
+    if(ans !== null) {
+      if(i === q.ans) cls += ' highlight-correct';
+      if(i === ans && ans !== q.ans) cls += ' wrong';
+      if(i === ans && ans === q.ans) cls = 'opt correct';
+    }
+    return `
+      <button class="${cls}" onclick="selectAnswer(${i})" ${ans!==null?'disabled':''}>
+        <span class="opt-letter">${String.fromCharCode(65+i)}</span>
+        <span class="opt-text">${o}</span>
+      </button>`;
+  }).join('');
 
-const total=questions.length;
+  return `
+    <div class="site-header" style="margin-bottom:20px">
+      <div class="logo-icon" style="cursor:pointer" onclick="if(confirm('Quit quiz?')){clearInterval(state.timerInterval);state.screen='setup';render()}">🛡️</div>
+      <div style="flex:1">
+        <div class="site-title">Cyber<span>Quiz</span></div>
+      </div>
+      <div class="timer ${state.elapsed>=(total*30)*0.9?'danger':state.elapsed>=(total*30)*0.7?'warn':''}" id="quiz-timer">
+        ⏱ ${formatTime(state.elapsed)}
+      </div>
+    </div>
 
-const pct =
-Math.round((current/total)*100);
+    <div class="hud">
+      <div class="hud-box"><div class="hud-val blue">${state.current+1}/${total}</div><div class="hud-lbl">Question</div></div>
+      <div class="hud-box"><div class="hud-val green">${score}</div><div class="hud-lbl">Correct</div></div>
+      <div class="hud-box"><div class="hud-val red">${wrong}</div><div class="hud-lbl">Wrong</div></div>
+      <div class="hud-box"><div class="hud-val" style="font-size:13px;padding-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${state.playerName}</div><div class="hud-lbl">Player</div></div>
+    </div>
 
-return `
+    <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
 
-<div class="stats">
+    <div class="q-dots">${dots}</div>
 
-<div class="stat">
-<div class="stat-val">
-${current+1}/${total}
-</div>
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-index">Q${state.current+1} of ${total}</span>
+        <span class="topic-badge" style="background:${TOPIC_COLORS[q.topic]+'22'};border-color:${TOPIC_COLORS[q.topic]+'66'};color:${TOPIC_COLORS[q.topic]}">${q.topic}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${opts}</div>
+      ${ans !== null ? `<div class="explanation show">
+        💡 The correct answer is <strong style="color:var(--green)">${String.fromCharCode(65+q.ans)}: ${q.opts[q.ans]}</strong>
+        ${ans===q.ans ? ' — Well done! ✓' : ''}
+      </div>` : ''}
+    </div>
 
-<div class="stat-lbl">
-Question
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-val" style="color:lightgreen;">
-${score}
-</div>
-
-<div class="stat-lbl">
-Correct
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-val" style="color:#ff6b6b;">
-
-${
-answered.filter(
-(a,i)=>
-a!==null &&
-a!==questions[i].ans
-).length
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(${state.current-1})" ${state.current===0?'disabled':''}>← Prev</button>
+      <div class="nav-spacer"></div>
+      ${state.current < total-1
+        ? `<button class="btn btn-primary" onclick="goTo(${state.current+1})">Next →</button>`
+        : `<button class="btn btn-primary" onclick="finishQuiz()" ${!allAnswered?'style="background:var(--yellow);color:#000"':''}>
+            ${allAnswered ? 'Finish ✓' : 'Finish ('+state.answers.filter(a=>a!==null).length+'/'+total+')'}
+           </button>`
+      }
+    </div>
+  `;
 }
 
-</div>
-
-<div class="stat-lbl">
-Wrong
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-val">
-${playerName}
-</div>
-
-<div class="stat-lbl">
-Player
-</div>
-</div>
-
-</div>
-
-<div class="progress-bar">
-
-<div
-class="progress-fill"
-style="width:${pct}%"
-></div>
-
-</div>
-
-<div class="q-card">
-
-<div class="q-num">
-
-Q${current+1}
-
-·
-
-<span class="badge">
-${q.topic}
-</span>
-
-</div>
-
-<div class="q-text">
-${q.q}
-</div>
-
-<div class="options">
-
-${
-
-q.opts.map((o,i)=>{
-
-let cls="opt-btn";
-
-if(ans!==null){
-
-if(i===q.ans)
-cls+=" correct";
-
-else if(i===ans)
-cls+=" wrong";
+function renderLeaderboardRows(data, currentEntry, limit) {
+  let rows = (limit ? data.slice(0, limit) : data).map((p, i) => {
+    let isYou = currentEntry && p === currentEntry;
+    let medal = rankMedal(i);
+    let isMedal = i < 3;
+    return `
+      <div class="lb-row ${isYou?'lb-you':''}" style="animation-delay:${i*40}ms">
+        <div class="lb-rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}">${medal}</div>
+        <div class="lb-name">${p.name}${isYou?'<span class="you-badge">YOU</span>':''}</div>
+        <div class="lb-score" style="text-align:right">${p.score}/${p.total}</div>
+        <div class="lb-bar-wrap">
+          <div class="lb-bar-bg"><div class="lb-bar-fill" style="width:${p.pct}%;background:${pctBarColor(p.pct)}"></div></div>
+        </div>
+        <div class="lb-pct ${pctColor(p.pct)}">${p.pct}%</div>
+      </div>`;
+  }).join('');
+  if(!rows) return '<div class="empty-state">No scores yet. Be the first!</div>';
+  return `
+    <div class="lb-cols">
+      <div class="lb-col-lbl">#</div>
+      <div class="lb-col-lbl">Player</div>
+      <div class="lb-col-lbl" style="text-align:right">Score</div>
+      <div class="lb-col-lbl"></div>
+      <div class="lb-col-lbl">%</div>
+    </div>
+    ${rows}`;
 }
 
-return `
+function renderResult() {
+  const score = state.answers.filter((a,i)=>a===state.questions[i].ans).length;
+  const total = state.questions.length;
+  const pct = Math.round((score/total)*100);
+  const wrong = total - score;
+  const skipped = state.answers.filter(a=>a===null).length;
+  const elapsed = state.elapsed;
 
-<button
-class="${cls}"
-onclick="selectAnswer(${i})"
-${ans!==null ? "disabled" : ""}
->
+  // find current entry
+  const currentEntry = leaderboard.find(e=>e.name===state.playerName&&e.pct===pct&&e.score===score);
+  const myRank = leaderboard.indexOf(currentEntry)+1;
 
-${String.fromCharCode(65+i)}.
-${o}
+  const grade = pct>=90?['Outstanding! 🔥','You aced it — elite cyber knowledge.']:
+                pct>=75?['Great Work! ⚡','Strong performance. Keep sharpening.']:
+                pct>=50?['Good Effort 📈','Decent result. Review weak areas.']:
+                        ['Keep Studying 📚','Focus on your weak topics below.'];
 
-</button>
+  // ring SVG
+  const r = 60, circ = 2*Math.PI*r;
+  const dashVal = circ * (pct/100);
 
-`;
+  // topic breakdown
+  const topicMap = {};
+  state.questions.forEach((q,i)=>{
+    if(!topicMap[q.topic]) topicMap[q.topic]={correct:0,total:0};
+    topicMap[q.topic].total++;
+    if(state.answers[i]===q.ans) topicMap[q.topic].correct++;
+  });
+  const tbRows = Object.entries(topicMap).sort((a,b)=>a[1].correct/a[1].total - b[1].correct/b[1].total).map(([t,v])=>{
+    let tp = Math.round((v.correct/v.total)*100);
+    return `<div class="tb-row">
+      <div class="tb-name">${t}</div>
+      <div class="tb-bar-bg"><div class="tb-bar-fill" style="width:${tp}%;background:${pctBarColor(tp)}"></div></div>
+      <div class="tb-score ${pctColor(tp)}">${v.correct}/${v.total}</div>
+    </div>`;
+  }).join('');
 
-}).join("")
+  const tabContent = state.resultTab === 'leaderboard'
+    ? renderLeaderboardRows(leaderboard, currentEntry, 15)
+    : `<div class="topic-breakdown">${tbRows}</div>`;
 
+  return `
+    <div class="site-header" style="margin-bottom:20px">
+      <div class="logo-icon">🛡️</div>
+      <div><div class="site-title">Cyber<span>Quiz</span></div></div>
+    </div>
+
+    <div class="card result-hero">
+      <div class="grade-text">${grade[0]}</div>
+      <div class="grade-sub">${grade[1]}</div>
+      <div class="score-ring">
+        <svg viewBox="0 0 150 150" width="150" height="150">
+          <circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--border2)" stroke-width="10"/>
+          <circle cx="75" cy="75" r="${r}" fill="none" stroke="${pctBarColor(pct)}" stroke-width="10"
+            stroke-dasharray="${dashVal} ${circ}" stroke-linecap="round"
+            style="transition:stroke-dasharray 1s ease"/>
+        </svg>
+        <div class="score-ring-val">
+          <div class="score-pct" style="color:${pctBarColor(pct)}">${pct}%</div>
+          <div class="score-frac">${score}/${total}</div>
+        </div>
+      </div>
+      <div class="result-stats">
+        <div class="rstat"><div class="rstat-val" style="color:var(--green)">${score}</div><div class="rstat-lbl">Correct</div></div>
+        <div class="rstat"><div class="rstat-val" style="color:var(--red)">${wrong - skipped}</div><div class="rstat-lbl">Wrong</div></div>
+        <div class="rstat"><div class="rstat-val" style="color:var(--yellow)">${skipped}</div><div class="rstat-lbl">Skipped</div></div>
+        <div class="rstat"><div class="rstat-val" style="color:var(--accent)">${formatTime(elapsed)}</div><div class="rstat-lbl">Time</div></div>
+      </div>
+      ${myRank ? `<p style="color:var(--muted);font-size:13px">You ranked <strong style="color:var(--accent)">#${myRank}</strong> on the leaderboard</p>` : ''}
+    </div>
+
+    <div class="card">
+      <div class="tab-row">
+        <button class="tab ${state.resultTab==='leaderboard'?'active':''}" onclick="state.resultTab='leaderboard';render()">🏆 Leaderboard</button>
+        <button class="tab ${state.resultTab==='breakdown'?'active':''}" onclick="state.resultTab='breakdown';render()">📊 Topic Breakdown</button>
+      </div>
+      ${tabContent}
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:4px">
+      <button class="btn btn-ghost" onclick="state.screen='setup';render()" style="flex:1">← Back to Setup</button>
+      <button class="btn btn-primary" onclick="startQuiz()" style="flex:1">Try Again 🔁</button>
+    </div>
+  `;
 }
 
-</div>
-
-</div>
-
-<div class="nav">
-
-<button
-class="btn"
-onclick="prev()"
-${current===0 ? "disabled" : ""}
->
-
-← Previous
-
-</button>
-
-${
-current<total-1
-
-? `
-
-<button
-class="btn btn-primary"
-onclick="next()"
->
-
-Next →
-
-</button>
-
-`
-
-: `
-
-<button
-class="btn btn-primary"
-onclick="showResult()"
->
-
-Finish Test 🎯
-
-</button>
-
-`
+function updateHUD() {
+  const el = document.getElementById('quiz-timer');
+  const total = state.questions.length;
+  if(el) {
+    el.textContent = `⏱ ${formatTime(state.elapsed)}`;
+    el.className = 'timer' + (state.elapsed>=(total*30)*0.9?' danger':state.elapsed>=(total*30)*0.7?' warn':'');
+  }
 }
 
-</div>
-
-`;
-}
-
-function showResult(){
-
-const total=questions.length;
-
-const pct =
-Math.round((score/total)*100);
-
-leaderboard.push({
-
-name:playerName,
-score:score,
-total:total,
-percentage:pct
-
-});
-
-leaderboard.sort(
-(a,b)=>b.percentage-a.percentage
-);
-
-leaderboard =
-leaderboard.slice(0,10);
-
-localStorage.setItem(
-"leaderboard",
-JSON.stringify(leaderboard)
-);
-
-const grade =
-
-pct>=90
-? "Excellent 🔥"
-
-: pct>=70
-? "Good Job ⚡"
-
-: "Keep Practicing 📚";
-
-document.getElementById("app").innerHTML=`
-
-<div class="result-screen">
-
-<h2>${grade}</h2>
-
-<div class="score-circle">
-
-<span class="score-pct">
-${pct}%
-</span>
-
-<span class="score-sub">
-${score}/${total}
-</span>
-
-</div>
-
-<div class="q-card">
-
-<h3 style="margin-bottom:15px;">
-🏆 Leaderboard
-</h3>
-
-${
-
-leaderboard.map((p,i)=>`
-
-<div class="leaderboard-item">
-
-<span>
-#${i+1} ${p.name}
-</span>
-
-<strong>
-${p.percentage}%
-(${p.score}/${p.total})
-</strong>
-
-</div>
-
-`).join("")
-
-}
-
-</div>
-
-<button
-class="btn btn-primary"
-onclick="
-started=false;
-render();
-"
->
-
-New Test 🚀
-
-</button>
-
-</div>
-
-`;
-}
-
-function render(){
-
-document.getElementById("app").innerHTML=
-
-started
-? renderQuiz()
-: renderStart();
+function render() {
+  const app = document.getElementById('app');
+  if(state.screen==='setup') app.innerHTML = renderSetup();
+  else if(state.screen==='quiz') app.innerHTML = renderQuiz();
+  else app.innerHTML = renderResult();
 }
 
 render();
-
 </script>
-
 </body>
 </html>
